@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrate
+        image: your-org/migrate:latest
+        command: ["sh", "-c", "./migrate up || ./migrate down"]
+      restartPolicy: Never
