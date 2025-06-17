@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: rollback-on-failure
+spec:
+  metrics:
+  - name: error-rate
+    interval: 30s
+    successCondition: result < 0.05
+    failureCondition: result >= 0.05
+    provider:
+      prometheus:
+        address: http://prometheus.monitoring.svc.cluster.local
+        query: |
+          rate(http_requests_total{status=~"5.."}[1m])
