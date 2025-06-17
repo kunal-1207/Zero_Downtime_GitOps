@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: app-rollout-canary
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: { duration: 30 }
+        - setWeight: 50
+        - pause: { duration: 60 }
+        - setWeight: 100
+      analysis:
+        templates:
+        - templateName: success-rate
+        - templateName: latency-check
+        args:
+        - name: service-name
+          value: app-service
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: your-org/app:latest
+        ports:
+        - containerPort: 8080
