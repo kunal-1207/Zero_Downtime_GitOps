@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: app-rollout
+spec:
+  replicas: 3
+  strategy:
+    blueGreen:
+      activeService: app-service
+      previewService: app-preview
+      autoPromotionEnabled: false
+      autoPromotionSeconds: 30
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: your-org/app:latest
+        ports:
+        - containerPort: 8080
